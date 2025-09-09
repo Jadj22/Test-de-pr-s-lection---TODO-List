@@ -117,7 +117,7 @@ Ce projet est sous licence MIT.
 
 ## 👥 Auteurs
 
-- [Votre Nom] - Développeur Principal
+- [Jadj22] - Développeur Principal
 
 ## 🙏 Remerciements
 

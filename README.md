@@ -118,8 +118,3 @@ Ce projet est sous licence MIT.
 ## 👥 Auteurs
 
 - [Jadj22] - Développeur Principal
-
-## 🙏 Remerciements
-
-- À l'équipe Django pour ce framework incroyable
-- À la communauté open source pour les nombreuses ressources disponibles

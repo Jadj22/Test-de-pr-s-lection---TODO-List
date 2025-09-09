@@ -14,8 +14,8 @@ class ProjetAdmin(admin.ModelAdmin):
         (None, {
             'fields': ('titre', 'description', 'proprietaire')
         }),
-        (_('Statut et dates'), {
-            'fields': ('statut', 'date_echeance')
+        (_('Statut'), {
+            'fields': ('statut',)
         }),
     )
     

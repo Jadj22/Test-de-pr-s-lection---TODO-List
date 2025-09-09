@@ -1,0 +1,61 @@
+{% extends 'authapp/base_auth.html' %}
+
+{% block title %}Mon Profil - Gestion des Tâches{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto bg-white p-8 rounded-lg shadow-md">
+    <h2 class="text-2xl font-bold mb-6">Mon Profil</h2>
+    
+    <form method="post" class="space-y-6">
+        {% csrf_token %}
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+                <label for="prenom" class="block text-sm font-medium text-gray-700">Prénom</label>
+                <input type="text" id="prenom" name="prenom" value="{{ user.first_name }}" required
+                       class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+            </div>
+            
+            <div>
+                <label for="nom" class="block text-sm font-medium text-gray-700">Nom</label>
+                <input type="text" id="nom" name="nom" value="{{ user.last_name }}" required
+                       class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+            </div>
+            
+            <div class="md:col-span-2">
+                <label for="email" class="block text-sm font-medium text-gray-700">Adresse email</label>
+                <input type="email" id="email" name="email" value="{{ user.email }}" required
+                       class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+            </div>
+            
+            <div class="md:col-span-2 pt-4 border-t border-gray-200">
+                <h3 class="text-lg font-medium text-gray-900 mb-4">Changer de mot de passe</h3>
+                
+                <div class="space-y-4">
+                    <div>
+                        <label for="nouveau_mot_de_passe" class="block text-sm font-medium text-gray-700">Nouveau mot de passe</label>
+                        <input type="password" id="nouveau_mot_de_passe" name="nouveau_mot_de_passe"
+                               class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                               placeholder="Laissez vide pour ne pas changer">
+                    </div>
+                    
+                    <div class="text-sm text-gray-500">
+                        <p>Le mot de passe doit contenir au moins 8 caractères.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="flex justify-end space-x-3 pt-6">
+            <a href="{% url 'tableau_de_bord' %}" 
+               class="bg-gray-200 text-gray-800 px-4 py-2 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
+                Annuler
+            </a>
+            <button type="submit" 
+                    class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                Enregistrer les modifications
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}

@@ -13,6 +13,11 @@ class Tache(models.Model):
         EN_COURS = 'en_cours', _('En cours')
         TERMINEE = 'terminee', _('Terminée')
     
+    class PrioriteTache(models.TextChoices):
+        BASSE = 'basse', _('Basse')
+        NORMALE = 'normale', _('Normale')
+        HAUTE = 'haute', _('Haute')
+    
     titre = models.CharField(_('titre'), max_length=200)
     description = models.TextField(_('description'), blank=True)
     statut = models.CharField(
@@ -28,6 +33,13 @@ class Tache(models.Model):
         verbose_name=_('projet')
     )
     date_echeance = models.DateTimeField(_('date d\'échéance'), null=True, blank=True)
+    priorite = models.CharField(
+        _('priorité'),
+        max_length=10,
+        choices=PrioriteTache.choices,
+        default=PrioriteTache.NORMALE
+    )
+    date_accomplissement = models.DateTimeField(_('date d\'accomplissement'), null=True, blank=True)
     date_creation = models.DateTimeField(_('date de création'), auto_now_add=True)
     date_mise_a_jour = models.DateTimeField(_('date de mise à jour'), auto_now=True)
     cree_par = models.ForeignKey(

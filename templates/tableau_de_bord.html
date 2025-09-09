@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tableau de bord - Gestion des Tâches</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body class="bg-gray-100">
+    <div class="min-h-screen flex">
+        <!-- Sidebar -->
+        <div class="bg-blue-800 text-white w-64 flex-shrink-0">
+            <div class="p-4">
+                <h1 class="text-2xl font-bold">Gestion des Tâches</h1>
+                <p class="text-blue-200 text-sm">Bienvenue, {{ user.first_name|default:user.username }}</p>
+            </div>
+            
+            <nav class="mt-6">
+                <div class="px-4 py-2 text-blue-200 uppercase text-xs font-semibold">Menu Principal</div>
+                
+                <a href="{% url 'tableau_de_bord' %}" 
+                   class="flex items-center px-6 py-3 text-white bg-blue-900 border-l-4 border-blue-400">
+                    <i class="fas fa-tachometer-alt mr-3"></i>
+                    Tableau de bord
+                </a>
+                
+                <a href="{% url 'projects:liste' %}" 
+                   class="flex items-center px-6 py-3 text-blue-100 hover:bg-blue-700">
+                    <i class="fas fa-folder mr-3"></i>
+                    Mes Projets
+                </a>
+                
+                <a href="{% url 'tasks:liste' %}" 
+                   class="flex items-center px-6 py-3 text-blue-100 hover:bg-blue-700">
+                    <i class="fas fa-tasks mr-3"></i>
+                    Toutes les Tâches
+                </a>
+                
+                <div class="px-4 py-2 text-blue-200 uppercase text-xs font-semibold mt-6">Compte</div>
+                
+                <a href="{% url 'authapp:profil' %}" 
+                   class="flex items-center px-6 py-3 text-blue-100 hover:bg-blue-700">
+                    <i class="fas fa-user-circle mr-3"></i>
+                    Mon Profil
+                </a>
+                
+                <a href="{% url 'authapp:deconnexion' %}" 
+                   class="flex items-center px-6 py-3 text-blue-100 hover:bg-blue-700">
+                    <i class="fas fa-sign-out-alt mr-3"></i>
+                    Déconnexion
+                </a>
+            </nav>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <!-- Top Navigation -->
+            <header class="bg-white shadow-sm z-10">
+                <div class="flex items-center justify-between p-4">
+                    <div class="flex items-center">
+                        <button class="text-gray-500 focus:outline-none lg:hidden mr-4">
+                            <i class="fas fa-bars"></i>
+                        </button>
+                        <h2 class="text-xl font-semibold text-gray-800">Tableau de bord</h2>
+                    </div>
+                    <div class="flex items-center">
+                        <div class="relative">
+                            <button class="text-gray-500 focus:outline-none">
+                                <i class="fas fa-bell text-xl"></i>
+                                <span class="absolute top-0 right-0 h-2 w-2 rounded-full bg-red-500"></span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Main Content -->
+            <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 p-6">
+                <div class="mb-8">
+                    <h2 class="text-2xl font-semibold text-gray-800 mb-6">Bienvenue, {{ user.first_name|default:user.username }} !</h2>
+                    
+                    <!-- Stats Cards -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                        <div class="bg-white rounded-lg shadow p-6">
+                            <div class="flex items-center">
+                                <div class="p-3 rounded-full bg-blue-100 text-blue-600 mr-4">
+                                    <i class="fas fa-folder-open text-xl"></i>
+                                </div>
+                                <div>
+                                    <p class="text-gray-500">Projets actifs</p>
+                                    <p class="text-2xl font-semibold">5</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-white rounded-lg shadow p-6">
+                            <div class="flex items-center">
+                                <div class="p-3 rounded-full bg-green-100 text-green-600 mr-4">
+                                    <i class="fas fa-check-circle text-xl"></i>
+                                </div>
+                                <div>
+                                    <p class="text-gray-500">Tâches terminées</p>
+                                    <p class="text-2xl font-semibold">12</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-white rounded-lg shadow p-6">
+                            <div class="flex items-center">
+                                <div class="p-3 rounded-full bg-yellow-100 text-yellow-600 mr-4">
+                                    <i class="fas fa-clock text-xl"></i>
+                                </div>
+                                <div>
+                                    <p class="text-gray-500">En attente</p>
+                                    <p class="text-2xl font-semibold">8</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Derniers projets -->
+                    <div class="bg-white rounded-lg shadow mb-8">
+                        <div class="p-6 border-b border-gray-200">
+                            <h3 class="text-lg font-semibold text-gray-800">Derniers projets</h3>
+                        </div>
+                        <div class="divide-y divide-gray-200">
+                            {% for i in "123"|make_list %}
+                            <div class="p-6 hover:bg-gray-50">
+                                <div class="flex justify-between items-center">
+                                    <div>
+                                        <h4 class="font-medium text-gray-900">Projet {{ i }}</h4>
+                                        <p class="text-sm text-gray-500">Description du projet {{ i }}</p>
+                                    </div>
+                                    <div class="flex space-x-2">
+                                        <span class="px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-800">En cours</span>
+                                        <a href="#" class="text-blue-600 hover:text-blue-800">
+                                            <i class="fas fa-ellipsis-h"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="mt-2 flex items-center text-sm text-gray-500">
+                                    <span class="mr-4">
+                                        <i class="far fa-calendar-alt mr-1"></i> 
+                                        Échéance: 12/06/2023
+                                    </span>
+                                    <span>
+                                        <i class="far fa-check-circle mr-1"></i>
+                                        3/5 tâches
+                                    </span>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <div class="p-4 bg-gray-50 text-center">
+                            <a href="{% url 'projects:liste' %}" class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                                Voir tous les projets <i class="fas fa-arrow-right ml-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <!-- Tâches récentes -->
+                    <div class="bg-white rounded-lg shadow">
+                        <div class="p-6 border-b border-gray-200">
+                            <h3 class="text-lg font-semibold text-gray-800">Tâches récentes</h3>
+                        </div>
+                        <div class="divide-y divide-gray-200">
+                            {% for i in "123"|make_list %}
+                            <div class="p-6 hover:bg-gray-50">
+                                <div class="flex items-start">
+                                    <input type="checkbox" class="mt-1 h-4 w-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500">
+                                    <div class="ml-3 flex-1">
+                                        <div class="flex items-center justify-between">
+                                            <p class="font-medium text-gray-900">Tâche importante {{ i }}</p>
+                                            <span class="px-2 py-1 text-xs rounded-full bg-yellow-100 text-yellow-800">En attente</span>
+                                        </div>
+                                        <p class="mt-1 text-sm text-gray-500">
+                                            Projet: <a href="#" class="text-blue-600 hover:underline">Projet {{ i }}</a>
+                                        </p>
+                                        <p class="mt-2 text-sm text-gray-500">
+                                            <i class="far fa-calendar-alt mr-1"></i> 
+                                            Échéance: 15/06/2023
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <div class="p-4 bg-gray-50 text-center">
+                            <a href="{% url 'tasks:liste' %}" class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                                Voir toutes les tâches <i class="fas fa-arrow-right ml-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </main>
+            
+            <!-- Footer -->
+            <footer class="bg-white border-t border-gray-200 p-4">
+                <div class="flex items-center justify-between text-sm text-gray-500">
+                    <div>
+                        &copy; {% now "Y" %} Gestion des Tâches. Tous droits réservés.
+                    </div>
+                    <div class="flex space-x-4">
+                        <a href="#" class="hover:text-gray-700">Aide</a>
+                        <a href="#" class="hover:text-gray-700">Confidentialité</a>
+                        <a href="#" class="hover:text-gray-700">Conditions</a>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+    
+    <script>
+        // Script pour le menu mobile
+        document.addEventListener('DOMContentLoaded', function() {
+            const mobileMenuButton = document.querySelector('.lg\:hidden');
+            const sidebar = document.querySelector('aside');
+            
+            if (mobileMenuButton && sidebar) {
+                mobileMenuButton.addEventListener('click', function() {
+                    sidebar.classList.toggle('hidden');
+                });
+            }
+        });
+    </script>
+</body>
+</html>

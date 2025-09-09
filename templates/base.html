@@ -76,7 +76,7 @@
             <div class="p-4">
                 <h1 class="text-2xl font-bold">Gestion des Tâches</h1>
                 {% if user.is_authenticated %}
-                <p class="text-blue-200 text-sm">Bienvenue, {{ user.first_name|default:user.username }}</p>
+                <p class="text-blue-200 text-sm">Bienvenue, {{ user.get_full_name|default:user.email }}</p>
                 {% endif %}
             </div>
             
@@ -136,9 +136,9 @@
                     <div class="flex items-center">
                         <div class="relative">
                             <button id="user-menu" class="flex items-center focus:outline-none">
-                                <span class="text-gray-700 mr-2 hidden md:inline">{{ user.get_full_name|default:user.username }}</span>
+                                <span class="text-gray-700 mr-2 hidden md:inline">{{ user.get_full_name|default:user.email }}</span>
                                 <div class="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white">
-                                    {{ user.first_name|first|default:user.username|first|upper }}
+                                    {{ user.first_name|first|default:user.email|first|upper }}
                                 </div>
                             </button>
                         </div>

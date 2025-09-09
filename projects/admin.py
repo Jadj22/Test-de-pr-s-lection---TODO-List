@@ -4,11 +4,15 @@ from .models import Projet
 
 @admin.register(Projet)
 class ProjetAdmin(admin.ModelAdmin):
-    list_display = ('titre', 'proprietaire', 'statut', 'date_creation', 'date_mise_a_jour')
+    list_display = ('titre', 'proprietaire_email', 'statut', 'date_creation', 'date_mise_a_jour')
     list_filter = ('statut', 'date_creation')
-    search_fields = ('titre', 'description', 'proprietaire__username', 'proprietaire__email')
+    search_fields = ('titre', 'description', 'proprietaire__email')
     list_select_related = ('proprietaire',)
     date_hierarchy = 'date_creation'
+    
+    def proprietaire_email(self, obj):
+        return obj.proprietaire.email
+    proprietaire_email.short_description = 'Propriétaire'
     
     fieldsets = (
         (None, {

@@ -64,7 +64,7 @@ class UserRole(models.Model):
         unique_together = ('user', 'role')
 
     def __str__(self):
-        return f"{self.user.username} - {self.role.name}"
+        return f"{self.user.email} - {self.role.name}"
 
 
 # Méthodes utilitaires pour gérer les rôles

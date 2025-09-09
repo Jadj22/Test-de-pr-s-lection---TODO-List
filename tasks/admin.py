@@ -6,7 +6,7 @@ from .models import Tache
 class TacheAdmin(admin.ModelAdmin):
     list_display = ('titre', 'projet', 'afficher_proprietaire', 'afficher_assigne_a', 'statut', 'date_echeance', 'est_terminee')
     list_filter = ('statut', 'date_echeance', 'projet')
-    search_fields = ('titre', 'description', 'projet__titre', 'cree_par__username', 'assigne_a__username')
+    search_fields = ('titre', 'description', 'projet__titre', 'cree_par__email', 'assigne_a__email')
     list_select_related = ('projet', 'cree_par', 'assigne_a')
     date_hierarchy = 'date_creation'
     list_editable = ('statut',)
@@ -24,16 +24,16 @@ class TacheAdmin(admin.ModelAdmin):
     )
     
     def afficher_proprietaire(self, obj):
-        return obj.projet.proprietaire.get_full_name() or obj.projet.proprietaire.username
+        return obj.projet.proprietaire.get_full_name() or obj.projet.proprietaire.email
     afficher_proprietaire.short_description = _('Propriétaire')
-    afficher_proprietaire.admin_order_field = 'projet__proprietaire__username'
+    afficher_proprietaire.admin_order_field = 'projet__proprietaire__email'
     
     def afficher_assigne_a(self, obj):
         if obj.assigne_a:
-            return obj.assigne_a.get_full_name() or obj.assigne_a.username
+            return obj.assigne_a.get_full_name() or obj.assigne_a.email
         return _('Non assignée')
     afficher_assigne_a.short_description = _('Assignée à')
-    afficher_assigne_a.admin_order_field = 'assigne_a__username'
+    afficher_assigne_a.admin_order_field = 'assigne_a__email'
     
     def est_terminee(self, obj):
         return obj.statut == 'terminee'

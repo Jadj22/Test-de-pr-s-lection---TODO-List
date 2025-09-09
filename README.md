@@ -142,7 +142,6 @@ POST {{base_url}}/api/inscription/
 Content-Type: application/json
 
 {
-    "username": "nouvel_utilisateur",
     "email": "utilisateur@example.com",
     "password": "motdepasse123",
     "password2": "motdepasse123",
@@ -154,7 +153,6 @@ Content-Type: application/json
 **Réponse attendue :**
 ```json
 {
-    "username": "nouvel_utilisateur",
     "email": "utilisateur@example.com",
     "first_name": "Prénom",
     "last_name": "Nom"
@@ -168,7 +166,7 @@ POST {{base_url}}/api/token/
 Content-Type: application/json
 
 {
-    "username": "votre_utilisateur",
+    "email": "utilisateur@example.com",
     "password": "votre_mot_de_passe"
 }
 ```

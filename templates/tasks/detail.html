@@ -139,7 +139,7 @@
                                 <dt class="text-sm text-gray-500 w-24 flex-shrink-0">Créée par</dt>
                                 <dd class="text-sm text-gray-900">
                                     {% if tache.cree_par %}
-                                        {{ tache.cree_par.get_full_name|default:tache.cree_par.username }}
+                                        {{ tache.cree_par.get_full_name|default:tache.cree_par.email }}
                                     {% else %}
                                         Utilisateur inconnu
                                     {% endif %}
@@ -150,7 +150,7 @@
                             <div class="flex items-start">
                                 <dt class="text-sm text-gray-500 w-24 flex-shrink-0">Assignée à</dt>
                                 <dd class="text-sm text-gray-900">
-                                    {{ tache.assigne_a.get_full_name|default:tache.assigne_a.username }}
+                                    {{ tache.assigne_a.get_full_name|default:tache.assigne_a.email }}
                                 </dd>
                             </div>
                             {% endif %}
@@ -208,6 +208,9 @@
 </div>
 
 {% block extra_js %}
+<!-- HTMX pour les mises à jour AJAX -->
+<script src="https://unpkg.com/htmx.org@1.9.6"></script>
+
 <script>
     // Fonction pour afficher la modale de suppression
     function showDeleteModal(itemId, itemTitle, itemType) {
@@ -234,9 +237,5 @@
     });
 </script>
 {% endblock %}
-{% endblock %}
 
-{% block extra_js %}
-<!-- HTMX pour les mises à jour AJAX -->
-<script src="https://unpkg.com/htmx.org@1.9.6"></script>
 {% endblock %}

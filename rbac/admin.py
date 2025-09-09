@@ -42,10 +42,14 @@ class RoleAdmin(admin.ModelAdmin):
 
 
 class UserRoleAdmin(admin.ModelAdmin):
-    list_display = ('user', 'role', 'created_at', 'created_by')
+    list_display = ('user_email', 'role', 'created_at', 'created_by')
     list_filter = ('role', 'created_at')
-    search_fields = ('user__username', 'role__name')
+    search_fields = ('user__email', 'role__name')
     readonly_fields = ('created_at',)
+    
+    def user_email(self, obj):
+        return obj.user.email
+    user_email.short_description = 'Email Utilisateur'
     
     def save_model(self, request, obj, form, change):
         if not change:

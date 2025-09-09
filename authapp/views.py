@@ -9,13 +9,16 @@ def inscription(request):
     """Vue pour l'inscription d'un nouvel utilisateur"""
     if request.method == 'POST':
         email = request.POST.get('email')
-        username = request.POST.get('username')
         prenom = request.POST.get('prenom')
         nom = request.POST.get('nom')
         password = request.POST.get('password')
         confirmation = request.POST.get('confirmation')
         
         # Validation des données
+        if not all([email, prenom, nom, password, confirmation]):
+            messages.error(request, 'Tous les champs sont obligatoires.')
+            return render(request, 'authapp/inscription.html')
+            
         if password != confirmation:
             messages.error(request, 'Les mots de passe ne correspondent pas.')
             return render(request, 'authapp/inscription.html')
@@ -23,15 +26,10 @@ def inscription(request):
         if User.objects.filter(email=email).exists():
             messages.error(request, 'Cette adresse email est déjà utilisée.')
             return render(request, 'authapp/inscription.html')
-            
-        if User.objects.filter(username=username).exists():
-            messages.error(request, 'Ce nom d\'utilisateur est déjà pris.')
-            return render(request, 'authapp/inscription.html')
         
         # Création de l'utilisateur
         try:
             user = User.objects.create_user(
-                username=username,
                 email=email,
                 first_name=prenom,
                 last_name=nom,

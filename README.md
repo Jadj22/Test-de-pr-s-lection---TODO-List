@@ -111,10 +111,6 @@ TodoListTest/
 └── todolist/             # Configuration du projet
 ```
 
-## 📝 Licence
-
-Ce projet est sous licence MIT.
-
 ## 👥 Auteurs
 
 - [Jadj22] - Développeur Principal

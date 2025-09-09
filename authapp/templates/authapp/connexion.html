@@ -1,0 +1,49 @@
+{% extends 'authapp/base_auth.html' %}
+
+{% block title %}Connexion - Gestion des Tâches{% endblock %}
+
+{% block content %}
+<div class="max-w-md mx-auto bg-white p-8 rounded-lg shadow-md">
+    <h2 class="text-2xl font-bold mb-6 text-center">Connexion</h2>
+    
+    <form method="post" class="space-y-4">
+        {% csrf_token %}
+        
+        <div>
+            <label for="email" class="block text-sm font-medium text-gray-700">Adresse email</label>
+            <input type="email" id="email" name="email" required
+                   class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+        </div>
+        
+        <div>
+            <label for="password" class="block text-sm font-medium text-gray-700">Mot de passe</label>
+            <input type="password" id="password" name="password" required
+                   class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+        </div>
+        
+        <div class="flex items-center justify-between">
+            <div class="text-sm">
+                <a href="#" class="font-medium text-blue-600 hover:text-blue-500">
+                    Mot de passe oublié ?
+                </a>
+            </div>
+        </div>
+        
+        <div>
+            <button type="submit" 
+                    class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                Se connecter
+            </button>
+        </div>
+    </form>
+    
+    <div class="mt-4 text-center">
+        <p class="text-sm text-gray-600">
+            Pas encore de compte ? 
+            <a href="{% url 'inscription' %}" class="font-medium text-blue-600 hover:text-blue-500">
+                S'inscrire
+            </a>
+        </p>
+    </div>
+</div>
+{% endblock %}

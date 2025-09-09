@@ -114,3 +114,155 @@ TodoListTest/
 ## 👥 Auteurs
 
 - [Jadj22] - Développeur Principal
+
+## Captures des interfaces
+
+![Capture](/static_src/capture.png)
+
+## 🚀 Tester avec Postman
+
+### Configuration initiale
+
+1. **Importer la collection**
+   - Téléchargez la collection Postman depuis le dossier `postman/`
+   - Importez-la dans Postman
+
+2. **Configurer l'environnement**
+   - Créez un nouvel environnement "TodoList Local"
+   - Ajoutez ces variables :
+     - `base_url`: `http://localhost:8000`
+     - `token`: (laissez vide)
+
+### Authentification
+
+#### 1. Inscription d'un nouvel utilisateur
+
+```http
+POST {{base_url}}/api/inscription/
+Content-Type: application/json
+
+{
+    "username": "nouvel_utilisateur",
+    "email": "utilisateur@example.com",
+    "password": "motdepasse123",
+    "password2": "motdepasse123",
+    "first_name": "Prénom",
+    "last_name": "Nom"
+}
+```
+
+**Réponse attendue :**
+```json
+{
+    "username": "nouvel_utilisateur",
+    "email": "utilisateur@example.com",
+    "first_name": "Prénom",
+    "last_name": "Nom"
+}
+```
+
+#### 2. Connexion (Obtenir un token JWT)
+
+```http
+POST {{base_url}}/api/token/
+Content-Type: application/json
+
+{
+    "username": "votre_utilisateur",
+    "password": "votre_mot_de_passe"
+}
+```
+
+**Tests (à ajouter dans l'onglet Tests) :**
+```javascript
+if (pm.response.code === 200) {
+    const jsonData = pm.response.json();
+    pm.environment.set('token', jsonData.access);
+    pm.test("Token reçu", function() {
+        pm.expect(jsonData.access).to.not.be.undefined;
+    });
+}
+```
+
+### Endpoints Tâches
+
+#### 1. Lister les tâches
+```http
+GET {{base_url}}/api/taches/
+Authorization: Bearer {{token}}
+```
+
+#### 2. Créer une tâche
+```http
+POST {{base_url}}/api/taches/
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "titre": "Ma nouvelle tâche",
+    "description": "Description de la tâche",
+    "date_echeance": "2025-12-31",
+    "priorite": "moyenne"
+}
+```
+
+#### 3. Mettre à jour une tâche
+```http
+PUT {{base_url}}/api/taches/1/
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "titre": "Tâche mise à jour",
+    "description": "Nouvelle description",
+    "termine": true
+}
+```
+
+#### 4. Basculer l'état d'une tâche
+```http
+POST {{base_url}}/api/taches/1/toggle_complete/
+Authorization: Bearer {{token}}
+```
+
+#### 5. Supprimer une tâche
+```http
+DELETE {{base_url}}/api/taches/1/
+Authorization: Bearer {{token}}
+```
+
+### Endpoints Projets
+
+#### 1. Lister les projets
+```http
+GET {{base_url}}/api/projets/
+Authorization: Bearer {{token}}
+```
+
+#### 2. Créer un projet
+```http
+POST {{base_url}}/api/projets/
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "titre": "Nouveau projet",
+    "description": "Description du projet"
+}
+```
+
+### Exécution des tests
+
+1. **Ordre recommandé** :
+   1. Authentification (pour obtenir le token)
+   2. Créer un projet
+   3. Créer une tâche
+   4. Lister les tâches
+   5. Mettre à jour une tâche
+   6. Basculer l'état d'une tâche
+   7. Supprimer une tâche
+
+2. **Variables d'environnement** :
+   - Le token JWT est automatiquement enregistré après l'authentification
+   - Utilisez `{{base_url}}` pour l'URL de base
+   - Utilisez `{{token}}` pour le jeton d'authentification

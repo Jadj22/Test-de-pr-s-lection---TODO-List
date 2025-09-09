@@ -1,5 +1,7 @@
 <!DOCTYPE html>
+{% extends 'base.html' %}
 {% load static %}
+{% load task_filters %}
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
@@ -76,10 +78,18 @@
                 </div>
             </header>
 
-            <!-- Main Content -->
-            <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 p-6">
-                <div class="mb-8">
+            {% block content %}
+            <div class="mb-8">
                     <h2 class="text-2xl font-semibold text-gray-800 mb-6">Bienvenue, {{ user.first_name|default:user.username }} !</h2>
+                    
+                    <!-- Debug Info -->
+                    <!-- <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-6" role="alert">
+                        <p class="font-bold">Debug Information:</p>
+                        <p>User: {{ user.username }}</p>
+                        <p>Projets actifs: {{ projets_actifs_count|default:"Non défini" }}</p>
+                        <p>Tâches terminées: {{ taches_terminees_count|default:"Non défini" }}</p>
+                        <p>Tâches en attente: {{ taches_en_attente_count|default:"Non défini" }}</p>
+                    </div> -->
                     
                     <!-- Stats Cards -->
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
@@ -90,7 +100,7 @@
                                 </div>
                                 <div>
                                     <p class="text-gray-500">Projets actifs</p>
-                                    <p class="text-2xl font-semibold">5</p>
+                                    <p class="text-2xl font-semibold">{{ projets_actifs_count }}</p>
                                 </div>
                             </div>
                         </div>
@@ -102,7 +112,7 @@
                                 </div>
                                 <div>
                                     <p class="text-gray-500">Tâches terminées</p>
-                                    <p class="text-2xl font-semibold">12</p>
+                                    <p class="text-2xl font-semibold">{{ taches_terminees_count }}</p>
                                 </div>
                             </div>
                         </div>
@@ -113,46 +123,60 @@
                                     <i class="fas fa-clock text-xl"></i>
                                 </div>
                                 <div>
-                                    <p class="text-gray-500">En attente</p>
-                                    <p class="text-2xl font-semibold">8</p>
+                                    <p class="text-gray-500">En retard</p>
+                                    <p class="text-2xl font-semibold">{{ taches_en_attente_count }}</p>
                                 </div>
                             </div>
                         </div>
                     </div>
                     
-                    <!-- Derniers projets -->
+                    <!-- Projets récents -->
                     <div class="bg-white rounded-lg shadow mb-8">
                         <div class="p-6 border-b border-gray-200">
-                            <h3 class="text-lg font-semibold text-gray-800">Derniers projets</h3>
+                            <h3 class="text-lg font-semibold text-gray-800">Projets récents</h3>
                         </div>
+                        {% if projets_recents %}
                         <div class="divide-y divide-gray-200">
-                            {% for i in "123"|make_list %}
+                            {% for projet in projets_recents %}
                             <div class="p-6 hover:bg-gray-50">
-                                <div class="flex justify-between items-center">
+                                <div class="flex justify-between items-start">
                                     <div>
-                                        <h4 class="font-medium text-gray-900">Projet {{ i }}</h4>
-                                        <p class="text-sm text-gray-500">Description du projet {{ i }}</p>
-                                    </div>
-                                    <div class="flex space-x-2">
-                                        <span class="px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-800">En cours</span>
-                                        <a href="#" class="text-blue-600 hover:text-blue-800">
-                                            <i class="fas fa-ellipsis-h"></i>
+                                        <a href="{% url 'projects:detail' projet.id %}" class="font-medium text-gray-900 hover:text-blue-600">
+                                            {{ projet.titre }}
                                         </a>
+                                        {% if projet.description %}
+                                        <p class="text-sm text-gray-500 mt-1">{{ projet.description|truncatechars:80 }}</p>
+                                        {% endif %}
                                     </div>
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium 
+                                              {% if projet.statut == 'en_cours' %}bg-blue-100 text-blue-800
+                                              {% elif projet.statut == 'termine' %}bg-green-100 text-green-800
+                                              {% else %}bg-gray-100 text-gray-800{% endif %}">
+                                        {{ projet.get_statut_display }}
+                                    </span>
                                 </div>
                                 <div class="mt-2 flex items-center text-sm text-gray-500">
+                                    {% if projet.date_echeance %}
                                     <span class="mr-4">
                                         <i class="far fa-calendar-alt mr-1"></i> 
-                                        Échéance: 12/06/2023
+                                        Échéance: {{ projet.date_echeance|date:"d/m/Y" }}
                                     </span>
+                                    {% endif %}
+                                    {% with taches=projet.tache_set.all %}
                                     <span>
                                         <i class="far fa-check-circle mr-1"></i>
-                                        3/5 tâches
+                                        {{ taches|filter_statut:'terminee'|length }}/{{ taches|length }} tâches
                                     </span>
+                                    {% endwith %}
                                 </div>
                             </div>
                             {% endfor %}
                         </div>
+                        {% else %}
+                        <div class="p-6 text-center text-gray-500">
+                            Aucun projet récent à afficher.
+                        </div>
+                        {% endif %}
                         <div class="p-4 bg-gray-50 text-center">
                             <a href="{% url 'projects:liste' %}" class="text-blue-600 hover:text-blue-800 text-sm font-medium">
                                 Voir tous les projets <i class="fas fa-arrow-right ml-1"></i>
@@ -165,28 +189,51 @@
                         <div class="p-6 border-b border-gray-200">
                             <h3 class="text-lg font-semibold text-gray-800">Tâches récentes</h3>
                         </div>
+                        {% if taches_recentes %}
                         <div class="divide-y divide-gray-200">
-                            {% for i in "123"|make_list %}
-                            <div class="p-6 hover:bg-gray-50">
+                            {% for tache in taches_recentes %}
+                            <div class="p-4 hover:bg-gray-50">
                                 <div class="flex items-start">
-                                    <input type="checkbox" class="mt-1 h-4 w-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500">
+                                    <input type="checkbox" 
+                                           class="h-4 w-4 mt-1 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                                           {% if tache.statut == 'terminee' %}checked{% endif %}
+                                           hx-post="{% url 'tasks:marquer_terminee' tache.id %}"
+                                           hx-trigger="change"
+                                           hx-swap="none">
                                     <div class="ml-3 flex-1">
-                                        <div class="flex items-center justify-between">
-                                            <p class="font-medium text-gray-900">Tâche importante {{ i }}</p>
-                                            <span class="px-2 py-1 text-xs rounded-full bg-yellow-100 text-yellow-800">En attente</span>
+                                        <div class="flex justify-between">
+                                            <a href="{% url 'tasks:detail' tache.id %}" class="text-sm font-medium text-gray-900 hover:text-blue-600">
+                                                {{ tache.titre }}
+                                            </a>
+                                            {% if tache.projet %}
+                                            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800 ml-2">
+                                                {{ tache.projet.titre|truncatechars:20 }}
+                                            </span>
+                                            {% endif %}
                                         </div>
-                                        <p class="mt-1 text-sm text-gray-500">
-                                            Projet: <a href="#" class="text-blue-600 hover:underline">Projet {{ i }}</a>
-                                        </p>
-                                        <p class="mt-2 text-sm text-gray-500">
-                                            <i class="far fa-calendar-alt mr-1"></i> 
-                                            Échéance: 15/06/2023
-                                        </p>
+                                        <div class="mt-1 text-sm text-gray-500">
+                                            <span class="flex items-center">
+                                                <i class="far fa-calendar-alt mr-1"></i>
+                                                {% if tache.date_echeance %}
+                                                    Échéance: {{ tache.date_echeance|date:"d/m/Y" }}
+                                                    {% if tache.en_retard %}
+                                                        <span class="ml-2 text-red-500">(En retard)</span>
+                                                    {% endif %}
+                                                {% else %}
+                                                    Pas d'échéance
+                                                {% endif %}
+                                            </span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                             {% endfor %}
                         </div>
+                        {% else %}
+                        <div class="p-6 text-center text-gray-500">
+                            Aucune tâche récente à afficher.
+                        </div>
+                        {% endif %}
                         <div class="p-4 bg-gray-50 text-center">
                             <a href="{% url 'tasks:liste' %}" class="text-blue-600 hover:text-blue-800 text-sm font-medium">
                                 Voir toutes les tâches <i class="fas fa-arrow-right ml-1"></i>
@@ -194,7 +241,7 @@
                         </div>
                     </div>
                 </div>
-            </main>
+            {% endblock %}
             
             <!-- Footer -->
             <footer class="bg-white border-t border-gray-200 p-4">

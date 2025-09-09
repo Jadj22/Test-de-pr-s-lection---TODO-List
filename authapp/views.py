@@ -64,7 +64,7 @@ def deconnexion_view(request):
     """Vue pour la déconnexion"""
     logout(request)
     messages.success(request, 'Vous avez été déconnecté avec succès.')
-    return redirect('connexion')
+    return redirect('authapp:connexion')
 
 @login_required
 def profil_view(request):

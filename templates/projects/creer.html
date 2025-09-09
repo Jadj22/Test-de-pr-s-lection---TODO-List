@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Créer un Projet - Gestion des Tâches{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <div class="bg-white rounded-lg shadow-md p-6">
+        <h1 class="text-2xl font-bold text-gray-800 mb-6">Créer un nouveau projet</h1>
+        
+        <form method="post" class="space-y-6">
+            {% csrf_token %}
+            
+            <div>
+                <label for="titre" class="block text-sm font-medium text-gray-700 mb-1">
+                    Titre du projet <span class="text-red-500">*</span>
+                </label>
+                <input type="text" id="titre" name="titre" required
+                       class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                       placeholder="Donnez un titre à votre projet">
+            </div>
+            
+            <div>
+                <label for="description" class="block text-sm font-medium text-gray-700 mb-1">
+                    Description
+                </label>
+                <textarea id="description" name="description" rows="4"
+                          class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                          placeholder="Décrivez votre projet (optionnel)"></textarea>
+            </div>
+            
+            <div class="flex justify-end space-x-4 pt-4">
+                <a href="{% url 'projects:liste' %}" 
+                   class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                    Annuler
+                </a>
+                <button type="submit" 
+                        class="px-4 py-2 border border-transparent rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                    Créer le projet
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

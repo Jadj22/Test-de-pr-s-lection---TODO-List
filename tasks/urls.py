@@ -10,4 +10,5 @@ urlpatterns = [
     path('<int:tache_id>/modifier/', views.modifier_tache, name='modifier'),
     path('<int:tache_id>/supprimer/', views.supprimer_tache, name='supprimer'),
     path('<int:tache_id>/changer-statut/<str:nouveau_statut>/', views.changer_statut_tache, name='changer_statut'),
+    path('<int:tache_id>/marquer-terminee/', views.marquer_terminee, name='marquer_terminee'),
 ]

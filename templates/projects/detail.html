@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load task_filters %}
+
+{% block title %}{{ projet.titre }} - Détails du Projet{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+        <!-- En-tête du projet -->
+        <div class="px-6 py-4 border-b border-gray-200">
+            <div class="flex justify-between items-start">
+                <div>
+                    <h1 class="text-2xl font-bold text-gray-800">{{ projet.titre }}</h1>
+                    <div class="flex items-center mt-2">
+                        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium 
+                                    {% if projet.statut == 'a_faire' %}bg-yellow-100 text-yellow-800
+                                    {% elif projet.statut == 'en_cours' %}bg-blue-100 text-blue-800
+                                    {% else %}bg-green-100 text-green-800{% endif %}">
+                            {{ projet.get_statut_display }}
+                        </span>
+                        <span class="ml-4 text-sm text-gray-500">
+                            <i class="far fa-calendar-alt mr-1"></i>
+                            Créé le {{ projet.date_creation|date:"d/m/Y" }}
+                        </span>
+                    </div>
+                </div>
+                <div class="flex space-x-2">
+                    <a href="{% url 'projects:modifier' projet.id %}" 
+                       class="px-3 py-1 border border-gray-300 rounded-md text-sm text-gray-700 hover:bg-gray-50">
+                        <i class="fas fa-edit mr-1"></i> Modifier
+                    </a>
+                    <a href="{% url 'projects:supprimer' projet.id %}" 
+                       class="px-3 py-1 border border-red-300 rounded-md text-sm text-red-700 hover:bg-red-50"
+                       onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce projet ? Cette action est irréversible.')">
+                        <i class="fas fa-trash mr-1"></i> Supprimer
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Contenu principal -->
+        <div class="p-6">
+            <!-- Description -->
+            <div class="mb-8">
+                <h2 class="text-lg font-semibold text-gray-800 mb-2">Description</h2>
+                <div class="bg-gray-50 p-4 rounded-md">
+                    {% if projet.description %}
+                        {{ projet.description|linebreaks }}
+                    {% else %}
+                        <p class="text-gray-500 italic">Aucune description fournie.</p>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Statistiques -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div class="bg-blue-50 p-4 rounded-lg">
+                    <div class="text-blue-800 text-sm font-medium">Tâches totales</div>
+                    <div class="mt-1 text-3xl font-semibold text-blue-700">{{ taches|length }}</div>
+                </div>
+                <div class="bg-green-50 p-4 rounded-lg">
+                    <div class="text-green-800 text-sm font-medium">Tâches terminées</div>
+                    <div class="mt-1 text-3xl font-semibold text-green-700">{{ taches|filter_statut:'terminee'|length }}</div>
+                </div>
+                <div class="bg-yellow-50 p-4 rounded-lg">
+                    <div class="text-yellow-800 text-sm font-medium">En cours</div>
+                    <div class="mt-1 text-3xl font-semibold text-yellow-700">{{ taches|filter_statut:'en_cours'|length }}</div>
+                </div>
+            </div>
+            
+            <!-- Actions -->
+            <div class="border-t border-gray-200 pt-6 flex justify-between items-center">
+                <a href="{% url 'projects:liste' %}" 
+                   class="inline-flex items-center text-blue-600 hover:text-blue-800">
+                    <i class="fas fa-arrow-left mr-2"></i> Retour à la liste
+                </a>
+                <div class="space-x-3">
+                    <a href="{% url 'tasks:creer' %}?projet={{ projet.id }}" 
+                       class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">
+                        <i class="fas fa-plus mr-2"></i> Ajouter une tâche
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

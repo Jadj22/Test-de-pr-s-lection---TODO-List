@@ -1,0 +1,177 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ tache.titre }} - Détails de la Tâche{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+        <!-- En-tête de la tâche -->
+        <div class="px-6 py-4 border-b border-gray-200">
+            <div class="flex justify-between items-start">
+                <div>
+                    <div class="flex items-center">
+                        <input type="checkbox" 
+                               class="h-6 w-6 text-blue-600 rounded focus:ring-blue-500 mr-3"
+                               {% if tache.termine %}checked{% endif %}
+                               hx-post="{% url 'tasks:changer_statut' tache.id 'toggle' %}"
+                               hx-trigger="change"
+                               hx-swap="none">
+                        <h1 class="text-2xl font-bold text-gray-800">{{ tache.titre }}</h1>
+                    </div>
+                    
+                    <div class="flex flex-wrap items-center mt-2 space-x-4">
+                        <div class="flex items-center">
+                            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium 
+                                        {% if tache.termine %}bg-green-100 text-green-800
+                                        else %}bg-yellow-100 text-yellow-800{% endif %}">
+                                {% if tache.termine %}Terminé{% else %}En cours{% endif %}
+                            </span>
+                        </div>
+                        
+                        {% if tache.priorite %}
+                        <div class="flex items-center">
+                            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium 
+                                        {% if tache.priorite == 'basse' %}bg-green-100 text-green-800
+                                        {% elif tache.priorite == 'moyenne' %}bg-yellow-100 text-yellow-800
+                                        else %}bg-red-100 text-red-800{% endif %}">
+                                <i class="fas fa-flag mr-1"></i>
+                                {{ tache.get_priorite_display }}
+                            </span>
+                        </div>
+                        {% endif %}
+                        
+                        {% if tache.date_echeance %}
+                        <div class="flex items-center">
+                            <i class="far fa-calendar-alt text-gray-500 mr-1"></i>
+                            <span class="text-sm text-gray-600">
+                                Échéance: {{ tache.date_echeance|date:"d/m/Y" }}
+                                {% if tache.est_en_retard %}
+                                    <span class="ml-1 text-red-500" title="En retard">
+                                        <i class="fas fa-exclamation-circle"></i>
+                                    </span>
+                                {% endif %}
+                            </span>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="flex space-x-2">
+                    <a href="{% url 'tasks:modifier' tache.id %}" 
+                       class="px-3 py-1 border border-gray-300 rounded-md text-sm text-gray-700 hover:bg-gray-50">
+                        <i class="fas fa-edit mr-1"></i> Modifier
+                    </a>
+                    <a href="{% url 'tasks:supprimer' tache.id %}" 
+                       class="px-3 py-1 border border-red-300 rounded-md text-sm text-red-700 hover:bg-red-50"
+                       onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette tâche ?')">
+                        <i class="fas fa-trash mr-1"></i> Supprimer
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Contenu principal -->
+        <div class="p-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Colonne de gauche -->
+                <div class="md:col-span-2">
+                    <!-- Description -->
+                    <div class="mb-8">
+                        <h2 class="text-lg font-semibold text-gray-800 mb-2">Description</h2>
+                        <div class="bg-gray-50 p-4 rounded-md">
+                            {% if tache.description %}
+                                {{ tache.description|linebreaks }}
+                            {% else %}
+                                <p class="text-gray-500 italic">Aucune description fournie.</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Colonne de droite -->
+                <div class="space-y-6">
+                    <!-- Informations -->
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <h3 class="text-sm font-medium text-gray-900 mb-3">Détails</h3>
+                        <dl class="space-y-3">
+                            <div class="flex items-start">
+                                <dt class="text-sm text-gray-500 w-24 flex-shrink-0">Créée le</dt>
+                                <dd class="text-sm text-gray-900">{{ tache.date_creation|date:"d/m/Y à H:i" }}</dd>
+                            </div>
+                            
+                            <div class="flex items-start">
+                                <dt class="text-sm text-gray-500 w-24 flex-shrink-0">Dernière mise à jour</dt>
+                                <dd class="text-sm text-gray-900">{{ tache.date_mise_a_jour|date:"d/m/Y à H:i" }}</dd>
+                            </div>
+                            
+                            {% if tache.date_echeance %}
+                            <div class="flex items-start">
+                                <dt class="text-sm text-gray-500 w-24 flex-shrink-0">Échéance</dt>
+                                <dd class="text-sm {% if tache.est_en_retard %}text-red-600 font-medium{% else %}text-gray-900{% endif %}">
+                                    {{ tache.date_echeance|date:"d/m/Y" }}
+                                    {% if tache.est_en_retard %}
+                                        <span class="ml-1" title="En retard">
+                                            <i class="fas fa-exclamation-circle"></i>
+                                        </span>
+                                    {% endif %}
+                                </dd>
+                            </div>
+                            {% endif %}
+                            
+                            {% if tache.projet %}
+                            <div class="flex items-start">
+                                <dt class="text-sm text-gray-500 w-24 flex-shrink-0">Projet</dt>
+                                <dd class="text-sm text-blue-600 hover:underline">
+                                    <a href="{% url 'projects:detail' tache.projet.id %}">
+                                        {{ tache.projet.titre }}
+                                    </a>
+                                </dd>
+                            </div>
+                            {% endif %}
+                            
+                            <div class="flex items-start">
+                                <dt class="text-sm text-gray-500 w-24 flex-shrink-0">Créée par</dt>
+                                <dd class="text-sm text-gray-900">
+                                    {% if tache.cree_par %}
+                                        {{ tache.cree_par.get_full_name|default:tache.cree_par.username }}
+                                    {% else %}
+                                        Utilisateur inconnu
+                                    {% endif %}
+                                </dd>
+                            </div>
+                            
+                            {% if tache.assigne_a %}
+                            <div class="flex items-start">
+                                <dt class="text-sm text-gray-500 w-24 flex-shrink-0">Assignée à</dt>
+                                <dd class="text-sm text-gray-900">
+                                    {{ tache.assigne_a.get_full_name|default:tache.assigne_a.username }}
+                                </dd>
+                            </div>
+                            {% endif %}
+                        </dl>
+                    </div>
+                    
+                    <!-- Section fichiers désactivée -->
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <h3 class="text-sm font-medium text-gray-900 mb-3">Fichiers joints</h3>
+                        <p class="text-sm text-gray-500">La gestion des fichiers n'est pas encore disponible.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="mt-6">
+        <a href="{% url 'tasks:liste' %}" 
+           class="inline-flex items-center text-blue-600 hover:text-blue-800">
+            <i class="fas fa-arrow-left mr-2"></i> Retour à la liste des tâches
+        </a>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<!-- HTMX pour les mises à jour AJAX -->
+<script src="https://unpkg.com/htmx.org@1.9.6"></script>
+{% endblock %}

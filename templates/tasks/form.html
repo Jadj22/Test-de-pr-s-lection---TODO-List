@@ -1,0 +1,163 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{% if form.instance.id %}Modifier{% else %}Créer{% endif %} une Tâche - Gestion des Tâches{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <div class="bg-white rounded-lg shadow-md p-6">
+        <h1 class="text-2xl font-bold text-gray-800 mb-6">
+            {% if form.instance.id %}
+                Modifier la tâche
+            {% else %}
+                Créer une nouvelle tâche
+            {% endif %}
+        </h1>
+        
+        <form method="post" class="space-y-6">
+            {% csrf_token %}
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Colonne de gauche -->
+                <div class="space-y-6">
+                    <!-- Titre -->
+                    <div>
+                        <label for="{{ form.titre.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
+                            Titre <span class="text-red-500">*</span>
+                        </label>
+                        {{ form.titre }}
+                        {% if form.titre.errors %}
+                            <p class="mt-1 text-sm text-red-600">{{ form.titre.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Description -->
+                    <div>
+                        <label for="{{ form.description.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
+                            Description
+                        </label>
+                        {{ form.description }}
+                        {% if form.description.errors %}
+                            <p class="mt-1 text-sm text-red-600">{{ form.description.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Projet -->
+                    <div>
+                        <label for="{{ form.projet.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
+                            Projet
+                        </label>
+                        {{ form.projet }}
+                        {% if form.projet.errors %}
+                            <p class="mt-1 text-sm text-red-600">{{ form.projet.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <!-- Colonne de droite -->
+                <div class="space-y-6">
+                    <!-- Priorité -->
+                    <div>
+                        <label for="{{ form.priorite.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
+                            Priorité
+                        </label>
+                        <div class="mt-1">
+                            {% for choice in form.priorite %}
+                            <div class="flex items-center mb-2">
+                                {{ choice.tag }}
+                                <label for="{{ choice.id_for_label }}" class="ml-2 block text-sm text-gray-700">
+                                    {{ choice.choice_label }}
+                                </label>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% if form.priorite.errors %}
+                            <p class="mt-1 text-sm text-red-600">{{ form.priorite.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Date d'échéance -->
+                    <div>
+                        <label for="{{ form.date_echeance.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
+                            Date d'échéance
+                        </label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="far fa-calendar-alt text-gray-400"></i>
+                            </div>
+                            {{ form.date_echeance }}
+                        </div>
+                        {% if form.date_echeance.errors %}
+                            <p class="mt-1 text-sm text-red-600">{{ form.date_echeance.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Assignée à -->
+                    <div>
+                        <label for="{{ form.assigne_a.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
+                            Assignée à
+                        </label>
+                        {{ form.assigne_a }}
+                        {% if form.assigne_a.errors %}
+                            <p class="mt-1 text-sm text-red-600">{{ form.assigne_a.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Terminée -->
+                    <div class="flex items-center">
+                        {{ form.termine }}
+                        <label for="{{ form.termine.id_for_label }}" class="ml-2 block text-sm text-gray-700">
+                            Tâche terminée
+                        </label>
+                        {% if form.termine.errors %}
+                            <p class="mt-1 text-sm text-red-600">{{ form.termine.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="flex justify-end space-x-4 pt-6 border-t border-gray-200">
+                <a href="{% if form.instance.id %}{% url 'tasks:detail' form.instance.id %}{% else %}{% url 'tasks:liste' %}{% endif %}" 
+                   class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                    Annuler
+                </a>
+                <button type="submit" 
+                        class="px-4 py-2 border border-transparent rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                    {% if form.instance.id %}Mettre à jour{% else %}Créer la tâche{% endif %}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<!-- Flatpickr pour le sélecteur de date -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://npmcdn.com/flatpickr/dist/l10n/fr.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialisation de flatpickr pour le champ de date
+        flatpickr("#{{ form.date_echeance.id_for_label }}", {
+            enableTime: true,
+            dateFormat: "Y-m-d H:i",
+            time_24hr: true,
+            locale: "fr",
+            minDate: "today"
+        });
+        
+        // Style des champs de formulaire avec Tailwind
+        const inputs = document.querySelectorAll('input[type="text"], input[type="email"], input[type="password"], input[type="date"], input[type="datetime-local"], select, textarea');
+        inputs.forEach(input => {
+            input.classList.add('w-full', 'px-3', 'py-2', 'border', 'border-gray-300', 'rounded-md', 'shadow-sm', 'focus:outline-none', 'focus:ring-blue-500', 'focus:border-blue-500', 'sm:text-sm');
+        });
+        
+        // Style spécifique pour les cases à cocher et boutons radio
+        const checkboxes = document.querySelectorAll('input[type="checkbox"], input[type="radio"]');
+        checkboxes.forEach(checkbox => {
+            checkbox.classList.add('h-4', 'w-4', 'text-blue-600', 'focus:ring-blue-500', 'border-gray-300', 'rounded');
+        });
+    });
+</script>
+{% endblock %}

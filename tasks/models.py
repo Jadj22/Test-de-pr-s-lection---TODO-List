@@ -64,4 +64,4 @@ class Tache(models.Model):
         ordering = ['-date_creation']
 
     def __str__(self):
-        return f"{self.titre} ({self.get_statut_display()})"
+        return self.titre

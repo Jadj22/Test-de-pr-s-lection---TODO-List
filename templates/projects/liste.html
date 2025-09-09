@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Mes Projets - Gestion des Tâches{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <div class="flex justify-between items-center mb-8">
+        <h1 class="text-3xl font-bold text-gray-800">Mes Projets</h1>
+        <a href="{% url 'projects:creer' %}" 
+           class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center">
+            <i class="fas fa-plus mr-2"></i>
+            Nouveau Projet
+        </a>
+    </div>
+
+    {% if messages %}
+    <div class="mb-6">
+        {% for message in messages %}
+        <div class="p-4 mb-4 text-sm rounded-lg {% if message.tags %}{{ message.tags }}{% endif %}
+             {% if message.tags == 'error' %}bg-red-100 text-red-700
+             {% elif message.tags == 'success' %}bg-green-100 text-green-700
+             {% else %}bg-blue-100 text-blue-700{% endif %}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for projet in projets %}
+        <div class="bg-white rounded-lg shadow-md overflow-hidden border border-gray-200 hover:shadow-lg transition-shadow duration-300">
+            <div class="p-6">
+                <div class="flex justify-between items-start mb-4">
+                    <h2 class="text-xl font-semibold text-gray-800">
+                        <a href="{% url 'projects:detail' projet.id %}" class="hover:text-blue-600 transition-colors">
+                            {{ projet.titre }}
+                        </a>
+                    </h2>
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium 
+                                {% if projet.statut == 'a_faire' %}bg-yellow-100 text-yellow-800
+                                {% elif projet.statut == 'en_cours' %}bg-blue-100 text-blue-800
+                                {% else %}bg-green-100 text-green-800{% endif %}">
+                        {{ projet.get_statut_display }}
+                    </span>
+                </div>
+                
+                <p class="text-gray-600 mb-4 line-clamp-3">
+                    {{ projet.description|default:"Aucune description fournie." }}
+                </p>
+                
+                <div class="flex justify-between items-center text-sm text-gray-500">
+                    <div>
+                        <i class="far fa-calendar-alt mr-1"></i>
+                        Créé le {{ projet.date_creation|date:"d/m/Y" }}
+                    </div>
+                    <div class="flex space-x-2">
+                        <a href="{% url 'projects:modifier' projet.id %}" 
+                           class="text-blue-600 hover:text-blue-800" 
+                           title="Modifier">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        <a href="{% url 'projects:supprimer' projet.id %}" 
+                           class="text-red-600 hover:text-red-800"
+                           onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce projet ? Cette action est irréversible.')"
+                           title="Supprimer">
+                            <i class="fas fa-trash"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-span-full text-center py-12">
+            <div class="text-gray-400 mb-4">
+                <i class="fas fa-folder-open text-5xl"></i>
+            </div>
+            <h3 class="text-lg font-medium text-gray-500">Aucun projet pour le moment</h3>
+            <p class="mt-2 text-gray-400">Commencez par créer votre premier projet</p>
+            <div class="mt-6">
+                <a href="{% url 'projects:creer' %}" 
+                   class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">
+                    <i class="fas fa-plus mr-2"></i>
+                    Créer un projet
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

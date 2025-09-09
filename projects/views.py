@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.db.models import Count
 from .models import Projet
 
 @login_required
@@ -33,11 +34,55 @@ def creer_projet(request):
     
     return render(request, 'projects/creer.html')
 
+import logging
+from django.db import connection
+
+logger = logging.getLogger(__name__)
+
 @login_required
 def detail_projet(request, projet_id):
     """Affiche les détails d'un projet"""
+    # Récupération du projet
     projet = get_object_or_404(Projet, id=projet_id, proprietaire=request.user)
-    return render(request, 'projects/detail.html', {'projet': projet})
+    
+    # Récupération des tâches avec sélection des champs nécessaires
+    taches = projet.taches.all().select_related('projet')
+    
+    # Logs de débogage détaillés
+    logger.info("\n=== DÉTAIL PROJET ===")
+    logger.info(f"Projet: {projet.titre} (ID: {projet.id})")
+    logger.info(f"Nombre total de tâches: {taches.count()}")
+    
+    # Afficher les requêtes SQL exécutées
+    logger.info("Requêtes SQL exécutées:")
+    for i, query in enumerate(connection.queries, 1):
+        logger.info(f"{i}. {query['sql']} (temps: {query['time']}s)")
+    
+    # Compter les tâches par statut
+    stats = taches.values('statut').annotate(total=Count('id'))
+    logger.info("Statistiques des tâches:")
+    for stat in stats:
+        logger.info(f"- {stat['statut']}: {stat['total']} tâches")
+    
+    # Vérifier le type et les attributs des premières tâches
+    sample_tasks = list(taches[:3])  # Prendre les 3 premières tâches pour l'échantillon
+    logger.info("\nExemple de tâches (3 premières):")
+    for i, tache in enumerate(sample_tasks, 1):
+        logger.info(f"Tâche {i}:")
+        logger.info(f"  - ID: {tache.id}")
+        logger.info(f"  - Titre: {tache.titre}")
+        logger.info(f"  - Statut: {tache.statut}")
+        logger.info(f"  - Type: {type(tache)}")
+        logger.info(f"  - Attributs: {dir(tache) if hasattr(tache, '__dict__') else 'Pas de __dict__'}")
+    
+    # Préparer le contexte
+    context = {
+        'projet': projet,
+        'taches': taches,  # QuerySet des tâches
+    }
+    
+    logger.info("=== FIN DÉTAIL PROJET ===\n")
+    return render(request, 'projects/detail.html', context)
 
 @login_required
 def modifier_projet(request, projet_id):

@@ -17,11 +17,11 @@
                 <nav>
                     {% if user.is_authenticated %}
                         <span class="mr-4">Bonjour, {{ user.first_name|default:user.username }}</span>
-                        <a href="{% url 'profil' %}" class="hover:underline mr-4">Mon Profil</a>
-                        <a href="{% url 'deconnexion' %}" class="hover:underline">Déconnexion</a>
+                        <a href="{% url 'authapp:profil' %}" class="hover:underline mr-4">Mon Profil</a>
+                        <a href="{% url 'authapp:deconnexion' %}" class="hover:underline">Déconnexion</a>
                     {% else %}
-                        <a href="{% url 'connexion' %}" class="hover:underline mr-4">Connexion</a>
-                        <a href="{% url 'inscription' %}" class="bg-white text-blue-600 px-4 py-2 rounded hover:bg-gray-100">S'inscrire</a>
+                        <a href="{% url 'authapp:connexion' %}" class="hover:underline mr-4">Connexion</a>
+                        <a href="{% url 'authapp:inscription' %}" class="bg-white text-blue-600 px-4 py-2 rounded hover:bg-gray-100">S'inscrire</a>
                     {% endif %}
                 </nav>
             </div>

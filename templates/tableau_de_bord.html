@@ -85,10 +85,19 @@
                     <!-- Debug Info -->
                     <!-- <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-6" role="alert">
                         <p class="font-bold">Debug Information:</p>
-                        <p>User: {{ user.username }}</p>
+                        <p>User: {{ user.username }} (ID: {{ user.id }})</p>
                         <p>Projets actifs: {{ projets_actifs_count|default:"Non défini" }}</p>
+                        <p>Projets récents: {{ projets_recents|length }}</p>
                         <p>Tâches terminées: {{ taches_terminees_count|default:"Non défini" }}</p>
                         <p>Tâches en attente: {{ taches_en_attente_count|default:"Non défini" }}</p>
+                        <p class="mt-2 font-semibold">Projets de l'utilisateur:</p>
+                        <ul class="text-sm">
+                            {% for p in user.projets.all %}
+                            <li>- {{ p.titre }} ({{ p.statut }})</li>
+                            {% empty %}
+                            <li>Aucun projet trouvé pour cet utilisateur</li>
+                            {% endfor %}
+                        </ul>
                     </div> -->
                     
                     <!-- Stats Cards -->
@@ -100,7 +109,7 @@
                                 </div>
                                 <div>
                                     <p class="text-gray-500">Projets actifs</p>
-                                    <p class="text-2xl font-semibold">{{ projets_actifs_count }}</p>
+                                    <p class="text-2xl font-semibold">{{ projets_actifs_count|default:0 }}</p>
                                 </div>
                             </div>
                         </div>

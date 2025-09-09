@@ -29,10 +29,19 @@ class DashboardView(LoginRequiredMixin, BaseTemplateView):
             return context
         
         # Statistiques des projets
+        print(f"\n=== DEBUG PROJETS ACTIFS ===")
+        print(f"Recherche des projets pour l'utilisateur: {user.id} - {user.username}")
+        print("Tous les projets de l'utilisateur:")
+        for p in Projet.objects.filter(proprietaire=user):
+            print(f"- {p.id}: {p.titre} (Statut: {p.statut})")
+            
         projets_actifs = Projet.objects.filter(
             proprietaire=user,
             statut='en_cours'
         )
+        print(f"Projets actifs trouvés: {projets_actifs.count()}")
+        for p in projets_actifs:
+            print(f"- {p.id}: {p.titre}")
         
         # Statistiques des tâches
         taches_utilisateur = Tache.objects.filter(
